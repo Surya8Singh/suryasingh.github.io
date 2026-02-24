@@ -702,6 +702,174 @@
 
   .scroll-card .pro-tech { margin-bottom: 0; }
 
+  /* ───── VIDEO DEMO PANE ───── */
+  .scroll-card-wrapper {
+    flex: 0 0 360px;
+    scroll-snap-align: start;
+    position: relative;
+  }
+
+  .scroll-card-wrapper .scroll-card {
+    flex: none;
+    position: relative;
+    z-index: 2;
+  }
+
+  .video-pane {
+    position: absolute;
+    left: 0; right: 0;
+    bottom: 0;
+    height: 0;
+    overflow: hidden;
+    border-radius: 0 0 var(--radius) var(--radius);
+    background: #1a1025;
+    transition: height 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+                opacity 0.3s ease;
+    opacity: 0;
+    z-index: 1;
+  }
+
+  .scroll-card-wrapper:hover .video-pane {
+    height: 180px;
+    opacity: 1;
+  }
+
+  .scroll-card-wrapper:hover .scroll-card {
+    border-radius: var(--radius) var(--radius) 0 0;
+    border-bottom-color: transparent;
+  }
+
+  .video-pane-inner {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .video-pane video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.45;
+    filter: blur(1px);
+    transition: opacity 0.3s, filter 0.3s;
+  }
+
+  .video-pane-inner:hover video {
+    opacity: 0.65;
+    filter: blur(0px);
+  }
+
+  .video-pane-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .video-play-btn {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+  }
+
+  .video-play-btn svg {
+    width: 20px; height: 20px;
+    fill: white;
+    margin-left: 2px;
+  }
+
+  .video-pane-inner:hover .video-play-btn {
+    background: rgba(168, 85, 247, 0.6);
+    border-color: rgba(168, 85, 247, 0.8);
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.3);
+  }
+
+  .video-pane-label {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .video-pane-duration {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0.04em;
+  }
+
+  /* Video modal */
+  .video-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(10, 5, 15, 0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .video-modal.active {
+    display: flex;
+  }
+
+  .video-modal-content {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+  }
+
+  .video-modal-content video {
+    width: 100%;
+    display: block;
+    border-radius: 16px;
+  }
+
+  .video-modal-close {
+    position: absolute;
+    top: -48px;
+    right: 0;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.08);
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .video-modal-close:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
   /* Scroll arrows */
   .scroll-nav {
     display: flex;
@@ -1228,6 +1396,7 @@
     .timeline { padding-left: 2rem; }
     .timeline-item::before { left: -2rem; }
     .scroll-card { flex: 0 0 300px; }
+    .scroll-card-wrapper { flex: 0 0 300px; }
     .testimonial-card { flex: 0 0 320px; }
     .scroll-container::after { width: 30px; }
   }
@@ -1422,89 +1591,138 @@
     <div class="scroll-container reveal">
       <div class="scroll-track" id="scrollTrack">
 
-        <!-- PROJECT 1 — Replace with your actual project -->
-        <a href="https://github.com/yourusername/project-1" target="_blank" class="scroll-card">
-          <div class="scroll-card-top">
-            <div class="scroll-card-icon">&#128640;</div>
-            <div class="scroll-card-links">
-              <span class="card-link" title="GitHub">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              </span>
-              <span class="card-link" title="Live Demo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </span>
+        <!-- PROJECT 1 — Replace href, video src, and content with your actual project -->
+        <div class="scroll-card-wrapper">
+          <a href="https://github.com/yourusername/project-1" target="_blank" class="scroll-card">
+            <div class="scroll-card-top">
+              <div class="scroll-card-icon">&#128640;</div>
+              <div class="scroll-card-links">
+                <span class="card-link" title="GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </span>
+                <span class="card-link" title="Live Demo">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </span>
+              </div>
+            </div>
+            <h3>Your Project Name</h3>
+            <p>Brief description of what this project does and why you built it. What did you learn?</p>
+            <div class="pro-tech">
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">LangChain</span>
+              <span class="tech-tag">Streamlit</span>
+            </div>
+          </a>
+          <div class="video-pane">
+            <div class="video-pane-inner" onclick="openVideoModal('demo-video-1')">
+              <!-- Replace src with your actual video file path e.g. ./videos/project-1-demo.mp4 -->
+              <video src="./videos/project-1-demo.mp4" muted loop playsinline></video>
+              <div class="video-pane-overlay">
+                <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 20,12 8,19"/></svg></div>
+                <span class="video-pane-label">Watch Demo</span>
+                <span class="video-pane-duration">2 min</span>
+              </div>
             </div>
           </div>
-          <h3>Your Project Name</h3>
-          <p>Brief description of what this project does and why you built it. What did you learn?</p>
-          <div class="pro-tech">
-            <span class="tech-tag">Python</span>
-            <span class="tech-tag">LangChain</span>
-            <span class="tech-tag">Streamlit</span>
-          </div>
-        </a>
+        </div>
 
         <!-- PROJECT 2 -->
-        <a href="https://github.com/yourusername/project-2" target="_blank" class="scroll-card">
-          <div class="scroll-card-top">
-            <div class="scroll-card-icon">&#129504;</div>
-            <div class="scroll-card-links">
-              <span class="card-link" title="GitHub">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              </span>
+        <div class="scroll-card-wrapper">
+          <a href="https://github.com/yourusername/project-2" target="_blank" class="scroll-card">
+            <div class="scroll-card-top">
+              <div class="scroll-card-icon">&#129504;</div>
+              <div class="scroll-card-links">
+                <span class="card-link" title="GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </span>
+              </div>
+            </div>
+            <h3>Another Project</h3>
+            <p>Another side project description. What problem does it solve? What tech did you explore?</p>
+            <div class="pro-tech">
+              <span class="tech-tag">FastAPI</span>
+              <span class="tech-tag">RAG</span>
+              <span class="tech-tag">Docker</span>
+            </div>
+          </a>
+          <div class="video-pane">
+            <div class="video-pane-inner" onclick="openVideoModal('demo-video-2')">
+              <video src="./videos/project-2-demo.mp4" muted loop playsinline></video>
+              <div class="video-pane-overlay">
+                <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 20,12 8,19"/></svg></div>
+                <span class="video-pane-label">Watch Demo</span>
+                <span class="video-pane-duration">2 min</span>
+              </div>
             </div>
           </div>
-          <h3>Another Project</h3>
-          <p>Another side project description. What problem does it solve? What tech did you explore?</p>
-          <div class="pro-tech">
-            <span class="tech-tag">FastAPI</span>
-            <span class="tech-tag">RAG</span>
-            <span class="tech-tag">Docker</span>
-          </div>
-        </a>
+        </div>
 
         <!-- PROJECT 3 -->
-        <a href="https://github.com/yourusername/project-3" target="_blank" class="scroll-card">
-          <div class="scroll-card-top">
-            <div class="scroll-card-icon">&#128202;</div>
-            <div class="scroll-card-links">
-              <span class="card-link" title="GitHub">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              </span>
-              <span class="card-link" title="Live Demo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-              </span>
+        <div class="scroll-card-wrapper">
+          <a href="https://github.com/yourusername/project-3" target="_blank" class="scroll-card">
+            <div class="scroll-card-top">
+              <div class="scroll-card-icon">&#128202;</div>
+              <div class="scroll-card-links">
+                <span class="card-link" title="GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </span>
+                <span class="card-link" title="Live Demo">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </span>
+              </div>
+            </div>
+            <h3>Yet Another Project</h3>
+            <p>Description of a data viz, ML experiment, or tool you built to sharpen your skills.</p>
+            <div class="pro-tech">
+              <span class="tech-tag">Tableau</span>
+              <span class="tech-tag">Python</span>
+              <span class="tech-tag">SQL</span>
+            </div>
+          </a>
+          <div class="video-pane">
+            <div class="video-pane-inner" onclick="openVideoModal('demo-video-3')">
+              <video src="./videos/project-3-demo.mp4" muted loop playsinline></video>
+              <div class="video-pane-overlay">
+                <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 20,12 8,19"/></svg></div>
+                <span class="video-pane-label">Watch Demo</span>
+                <span class="video-pane-duration">2 min</span>
+              </div>
             </div>
           </div>
-          <h3>Yet Another Project</h3>
-          <p>Description of a data viz, ML experiment, or tool you built to sharpen your skills.</p>
-          <div class="pro-tech">
-            <span class="tech-tag">Tableau</span>
-            <span class="tech-tag">Python</span>
-            <span class="tech-tag">SQL</span>
-          </div>
-        </a>
+        </div>
 
         <!-- PROJECT 4 -->
-        <a href="https://github.com/yourusername/project-4" target="_blank" class="scroll-card">
-          <div class="scroll-card-top">
-            <div class="scroll-card-icon">&#9889;</div>
-            <div class="scroll-card-links">
-              <span class="card-link" title="GitHub">
-                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-              </span>
+        <div class="scroll-card-wrapper">
+          <a href="https://github.com/yourusername/project-4" target="_blank" class="scroll-card">
+            <div class="scroll-card-top">
+              <div class="scroll-card-icon">&#9889;</div>
+              <div class="scroll-card-links">
+                <span class="card-link" title="GitHub">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                </span>
+              </div>
+            </div>
+            <h3>One More Project</h3>
+            <p>Keep adding cards here as you build more projects. The section scrolls horizontally.</p>
+            <div class="pro-tech">
+              <span class="tech-tag">Google ADK</span>
+              <span class="tech-tag">Agents</span>
+              <span class="tech-tag">Python</span>
+            </div>
+          </a>
+          <div class="video-pane">
+            <div class="video-pane-inner" onclick="openVideoModal('demo-video-4')">
+              <video src="./videos/project-4-demo.mp4" muted loop playsinline></video>
+              <div class="video-pane-overlay">
+                <div class="video-play-btn"><svg viewBox="0 0 24 24"><polygon points="8,5 20,12 8,19"/></svg></div>
+                <span class="video-pane-label">Watch Demo</span>
+                <span class="video-pane-duration">2 min</span>
+              </div>
             </div>
           </div>
-          <h3>One More Project</h3>
-          <p>Keep adding cards here as you build more projects. The section scrolls horizontally.</p>
-          <div class="pro-tech">
-            <span class="tech-tag">Google ADK</span>
-            <span class="tech-tag">Agents</span>
-            <span class="tech-tag">Python</span>
-          </div>
-        </a>
+        </div>
 
-        <!-- Add more scroll-card blocks here as you build more projects -->
+        <!-- Add more scroll-card-wrapper blocks here as you build more projects -->
 
       </div>
       <div class="scroll-nav">
@@ -1810,9 +2028,76 @@
   </div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<!-- VIDEO MODAL -->
+<div class="video-modal" id="videoModal">
+  <div class="video-modal-content">
+    <button class="video-modal-close" onclick="closeVideoModal()">&#10005;</button>
+    <video id="modalVideo" controls></video>
+  </div>
+</div>
+
+<script>
+  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Video preview on hover
+  document.querySelectorAll('.scroll-card-wrapper').forEach(wrapper => {
+    const previewVideo = wrapper.querySelector('.video-pane video');
+    if (!previewVideo) return;
+
+    wrapper.addEventListener('mouseenter', () => {
+      previewVideo.currentTime = 0;
+      previewVideo.play().catch(() => {});
+    });
+
+    wrapper.addEventListener('mouseleave', () => {
+      previewVideo.pause();
+      previewVideo.currentTime = 0;
+    });
+  });
+
+  // Video modal — open
+  function openVideoModal(videoId) {
+    event.preventDefault();
+    event.stopPropagation();
+    const modal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    const clickedPane = event.currentTarget;
+    const previewVideo = clickedPane.querySelector('video');
+    if (previewVideo && previewVideo.src) {
+      modalVideo.src = previewVideo.src;
+    }
+    modal.classList.add('active');
+    modalVideo.play().catch(() => {});
+    document.body.style.overflow = 'hidden';
   }
+
+  // Video modal — close
+  function closeVideoModal() {
+    const modal = document.getElementById('videoModal');
+    const modalVideo = document.getElementById('modalVideo');
+    modal.classList.remove('active');
+    modalVideo.pause();
+    modalVideo.src = '';
+    document.body.style.overflow = '';
+  }
+
+  // Close modal on backdrop click
+  document.getElementById('videoModal').addEventListener('click', (e) => {
+    if (e.target === e.currentTarget) closeVideoModal();
+  });
+
+  // Close modal on Escape key
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeVideoModal();
+  });
+</script>
+
+</body>
+</html>

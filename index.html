@@ -272,11 +272,12 @@
   /* ───── FLOATING SHAPES ───── */
   .hero-shapes {
     position: absolute;
-    right: 5%; top: 50%;
+    right: -5%; top: 50%;
     transform: translateY(-50%);
-    width: 340px; height: 400px;
+    width: 280px; height: 400px;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
+    opacity: 0.7;
   }
 
   .shape {
@@ -286,28 +287,28 @@
   }
 
   .shape-1 {
-    width: 120px; height: 120px;
+    width: 90px; height: 90px;
     background: linear-gradient(135deg, #FECDD3, #FEE2E2);
-    top: 10%; left: 20%;
-    border-radius: 28px;
+    top: 5%; left: 30%;
+    border-radius: 24px;
     --rot: 12deg;
     box-shadow: 0 12px 40px rgba(254, 205, 211, 0.4);
   }
 
   .shape-2 {
-    width: 90px; height: 90px;
+    width: 70px; height: 70px;
     background: linear-gradient(135deg, #DDD6FE, #C4B5FD);
-    top: 0; right: 10%;
-    border-radius: 22px;
+    top: 0; right: 0;
+    border-radius: 18px;
     --rot: -8deg;
     animation-delay: -2s;
     box-shadow: 0 12px 40px rgba(221, 214, 254, 0.4);
   }
 
   .shape-3 {
-    width: 100px; height: 100px;
+    width: 80px; height: 80px;
     background: linear-gradient(135deg, #BAE6FD, #7DD3FC);
-    bottom: 20%; left: 5%;
+    bottom: 25%; left: 10%;
     border-radius: 50%;
     --rot: 0deg;
     animation-delay: -4s;
@@ -315,20 +316,20 @@
   }
 
   .shape-4 {
-    width: 70px; height: 70px;
+    width: 55px; height: 55px;
     background: linear-gradient(135deg, #D1FAE5, #6EE7B7);
-    bottom: 5%; right: 25%;
-    border-radius: 18px;
+    bottom: 10%; right: 15%;
+    border-radius: 14px;
     --rot: 20deg;
     animation-delay: -1s;
     box-shadow: 0 12px 40px rgba(209, 250, 229, 0.4);
   }
 
   .shape-5 {
-    width: 55px; height: 55px;
+    width: 45px; height: 45px;
     background: linear-gradient(135deg, #FED7AA, #FDBA74);
-    top: 40%; right: 0;
-    border-radius: 16px;
+    top: 45%; right: 0;
+    border-radius: 12px;
     --rot: -15deg;
     animation-delay: -3s;
     box-shadow: 0 12px 40px rgba(254, 215, 170, 0.4);
@@ -1200,6 +1201,19 @@
     transform: translateY(0);
   }
 
+  /* Fallback: if JS hasn't run after 2s, show everything */
+  @keyframes revealFallback {
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    animation: revealFallback 0.01s 2s forwards;
+  }
+
+  .reveal.visible {
+    animation: none;
+  }
+
   /* ───── RESPONSIVE ───── */
   @media (max-width: 768px) {
     .stats-grid { grid-template-columns: repeat(2, 1fr); }
@@ -1523,13 +1537,6 @@
             <span class="skill-pill">NLP</span>
             <span class="skill-pill">Predictive Analytics</span>
           </div>
-          <div class="skill-group-title">Automation & Integration</div>
-          <div class="skill-list">
-            <span class="skill-pill pop-mint">n8n</span>
-            <span class="skill-pill pop-mint">Zapier</span>
-            <span class="skill-pill pop-sky">Webhooks</span>
-          </div>
-          </div>
           <div class="skill-group-title">Languages & Data</div>
           <div class="skill-list">
             <span class="skill-pill pop-sky">Python</span>
@@ -1538,13 +1545,19 @@
             <span class="skill-pill">Alteryx</span>
             <span class="skill-pill">Dataiku</span>
           </div>
-        </div>
-        <div>
           <div class="skill-group-title">Cloud & Infrastructure</div>
           <div class="skill-list">
             <span class="skill-pill pop-mint">AWS</span>
             <span class="skill-pill">AWS Step Functions</span>
             <span class="skill-pill">ETL Pipelines</span>
+          </div>
+        </div>
+        <div>
+          <div class="skill-group-title">Automation & Integration</div>
+          <div class="skill-list">
+            <span class="skill-pill pop-mint">n8n</span>
+            <span class="skill-pill pop-mint">Zapier</span>
+            <span class="skill-pill pop-sky">Webhooks</span>
           </div>
           <div class="skill-group-title">BI & Visualization</div>
           <div class="skill-list">
@@ -1768,7 +1781,7 @@
         <h2 class="section-title">Let's build something<br>intelligent together</h2>
         <p class="contact-desc">Open to AI/ML engineering, consulting, and leadership roles. Whether you have a position in mind or want to discuss a project — I'd love to connect.</p>
         <div class="contact-links">
-          <a href="mailto:suryapratap.singh08@gmail.com" class="contact-link">
+          <a href="/cdn-cgi/l/email-protection#691a1c1b1008191b081d0819471a00070e015951290e04080005470a0604" class="contact-link">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
             Email
           </a>
@@ -1797,15 +1810,9 @@
   </div>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) entry.target.classList.add('visible');
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-</script>
-
-</body>
-</html>
+  }

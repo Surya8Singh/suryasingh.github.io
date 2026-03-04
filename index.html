@@ -4,1438 +4,280 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Surya Singh — AI & Analytics</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0a0a0a;
-    --bg-panel: #111111;
-    --bg-card: #161616;
-    --bg-hover: #1a1f1a;
-    --border: #1e1e1e;
-    --border-glow: #00ff6620;
-    --green: #00ff66;
-    --green-dim: #00cc52;
-    --green-muted: #00ff6640;
-    --green-subtle: #00ff6615;
-    --lime: #b8ff57;
-    --cyan: #00e5ff;
-    --text: #e8e8e8;
-    --text-dim: #888888;
-    --text-muted: #555555;
-    --shadow-glow: 0 0 30px rgba(0, 255, 102, 0.06);
-    --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.4);
-    --display: 'Syne', sans-serif;
-    --mono: 'JetBrains Mono', 'Space Mono', monospace;
-    --body: 'Space Mono', monospace;
-    --radius: 10px;
-  }
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--body);
-    font-size: 12px;
-    line-height: 1.5;
-    overflow: hidden;
-    height: 100vh;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  ::selection { background: var(--green); color: var(--bg); }
-  ::-webkit-scrollbar { width: 4px; height: 4px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
-  ::-webkit-scrollbar-thumb:hover { background: var(--green-dim); }
-
-  /* ───── SHELL LAYOUT ───── */
-  .shell {
-    height: 100vh;
-    display: grid;
-    grid-template-rows: 40px 1fr;
-    grid-template-columns: 1fr;
-    overflow: hidden;
-  }
-
-  /* ───── TOP BAR ───── */
-  .topbar {
-    background: var(--bg-panel);
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    z-index: 100;
-  }
-
-  .topbar-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .topbar-dots {
-    display: flex;
-    gap: 6px;
-  }
-
-  .topbar-dots span {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-  }
-
-  .topbar-dots span:nth-child(1) { background: #ff5f57; }
-  .topbar-dots span:nth-child(2) { background: #ffbd2e; }
-  .topbar-dots span:nth-child(3) { background: #28c840; }
-
-  .topbar-title {
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text-dim);
-    font-weight: 400;
-  }
-
-  .topbar-title .green { color: var(--green); }
-
-  .topbar-nav {
-    display: flex;
-    gap: 4px;
-    list-style: none;
-  }
-
-  .topbar-nav a {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--text-muted);
-    text-decoration: none;
-    padding: 4px 10px;
-    border-radius: 4px;
-    transition: all 0.2s;
-    letter-spacing: 0.02em;
-  }
-
-  .topbar-nav a:hover {
-    color: var(--green);
-    background: var(--green-subtle);
-  }
-
-  .topbar-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-muted);
-  }
-
-  .status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px var(--green);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
-  }
-
-  /* ───── MAIN GRID ───── */
-  .main {
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    grid-template-rows: 1fr;
-    overflow: hidden;
-  }
-
-  /* ───── LEFT SIDEBAR ───── */
-  .sidebar {
-    background: var(--bg-panel);
-    border-right: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
-    overflow-y: auto;
-    padding: 16px;
-    gap: 12px;
-  }
-
-  /* Hero compact */
-  .hero-compact {
-    padding: 16px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--bg-card);
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    animation: slideIn 0.5s ease forwards 0.1s;
-  }
-
-  .hero-compact::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--green), var(--cyan), var(--lime));
-  }
-
-  .hero-name {
-    font-family: var(--display);
-    font-size: 22px;
-    font-weight: 800;
-    line-height: 1.1;
-    letter-spacing: -0.03em;
-    margin-bottom: 2px;
-    color: var(--text);
-  }
-
-  .hero-name .glow {
-    color: var(--green);
-    text-shadow: 0 0 20px var(--green-muted);
-  }
-
-  .hero-role {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--green-dim);
-    margin-bottom: 10px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .hero-desc {
-    font-size: 11px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 12px;
-  }
-
-  .hero-links {
-    display: flex;
-    gap: 6px;
-  }
-
-  .hero-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 5px 10px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: all 0.2s;
-    background: transparent;
-  }
-
-  .hero-link:hover {
-    border-color: var(--green);
-    color: var(--green);
-    background: var(--green-subtle);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .hero-link svg { width: 12px; height: 12px; }
-
-  /* Stats row */
-  .stats-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 6px;
-    opacity: 0;
-    animation: slideIn 0.5s ease forwards 0.2s;
-  }
-
-  .stat {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px;
-    text-align: center;
-    transition: all 0.25s;
-  }
-
-  .stat:hover {
-    border-color: var(--green-muted);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .stat-val {
-    font-family: var(--display);
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--green);
-    line-height: 1;
-  }
-
-  .stat-lbl {
-    font-size: 9px;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin-top: 2px;
-  }
-
-  /* Skills sidebar */
-  .skills-block {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    opacity: 0;
-    animation: slideIn 0.5s ease forwards 0.3s;
-  }
-
-  .skills-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 600;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    margin-bottom: 8px;
-  }
-
-  .skills-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-  }
-
-  .stag {
-    font-family: var(--mono);
-    font-size: 9px;
-    padding: 3px 8px;
-    border-radius: 4px;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    transition: all 0.2s;
-    cursor: default;
-  }
-
-  .stag:hover {
-    border-color: var(--green-muted);
-    color: var(--green);
-    background: var(--green-subtle);
-  }
-
-  .stag.highlight {
-    border-color: var(--green-muted);
-    color: var(--green);
-    background: var(--green-subtle);
-  }
-
-  /* Contact block */
-  .contact-block {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    opacity: 0;
-    animation: slideIn 0.5s ease forwards 0.4s;
-  }
-
-  .contact-block .skills-label { margin-bottom: 8px; }
-
-  .contact-list {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .contact-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 8px;
-    border-radius: 6px;
-    font-size: 10px;
-    color: var(--text-dim);
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .contact-item:hover {
-    background: var(--green-subtle);
-    color: var(--green);
-  }
-
-  .contact-item svg { width: 12px; height: 12px; flex-shrink: 0; }
-
-  /* ───── RIGHT CONTENT ───── */
-  .content {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    overflow: hidden;
-    gap: 0;
-  }
-
-  /* ───── SECTION TABS ───── */
-  .section-tabs {
-    display: flex;
-    background: var(--bg-panel);
-    border-bottom: 1px solid var(--border);
-    padding: 0 16px;
-    gap: 0;
-    overflow-x: auto;
-  }
-
-  .tab {
-    font-family: var(--mono);
-    font-size: 10px;
-    font-weight: 400;
-    color: var(--text-muted);
-    padding: 10px 16px;
-    cursor: pointer;
-    border: none;
-    background: none;
-    border-bottom: 2px solid transparent;
-    transition: all 0.2s;
-    white-space: nowrap;
-    letter-spacing: 0.02em;
-  }
-
-  .tab:hover { color: var(--text-dim); }
-
-  .tab.active {
-    color: var(--green);
-    border-bottom-color: var(--green);
-    background: var(--green-subtle);
-  }
-
-  /* ───── TAB PANELS ───── */
-  .tab-panel {
-    display: none;
-    overflow: hidden;
-    padding: 16px;
-  }
-
-  .tab-panel.active {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .panel-title {
-    font-family: var(--display);
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--text);
-    letter-spacing: -0.02em;
-  }
-
-  .panel-sub {
-    font-size: 10px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
-
-  /* ───── PROFESSIONAL WORK PANEL ───── */
-  .pro-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 8px;
-    flex: 1;
-    align-items: stretch;
-  }
-
-  .pro-card {
-    flex: 0 0 300px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    animation: cardIn 0.4s ease forwards;
-  }
-
-  .pro-card:nth-child(1) { animation-delay: 0.05s; }
-  .pro-card:nth-child(2) { animation-delay: 0.1s; }
-  .pro-card:nth-child(3) { animation-delay: 0.15s; }
-  .pro-card:nth-child(4) { animation-delay: 0.2s; }
-
-  .pro-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--green), transparent);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .pro-card:hover {
-    border-color: var(--green-muted);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
-  }
-
-  .pro-card:hover::before { opacity: 1; }
-
-  .pro-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
-  .pro-icon {
-    font-size: 18px;
-    width: 32px; height: 32px;
-    border-radius: 8px;
-    background: var(--green-subtle);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .pro-badge {
-    font-family: var(--mono);
-    font-size: 8px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 4px;
-    background: rgba(255, 95, 87, 0.1);
-    color: #ff5f57;
-    border: 1px solid rgba(255, 95, 87, 0.2);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
-  .pro-card h3 {
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-    color: var(--text);
-  }
-
-  .pro-card p {
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    margin-bottom: 10px;
-    flex-grow: 1;
-  }
-
-  .tags-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px;
-    margin-bottom: 10px;
-  }
-
-  .tag {
-    font-family: var(--mono);
-    font-size: 9px;
-    padding: 2px 7px;
-    border-radius: 4px;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-  }
-
-  .impact-row {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    padding-top: 8px;
-    border-top: 1px solid var(--border);
-    align-items: center;
-  }
-
-  .impact {
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 500;
-    padding: 2px 8px;
-    border-radius: 4px;
-  }
-
-  .impact.green { background: rgba(0, 255, 102, 0.1); color: var(--green); }
-  .impact.cyan { background: rgba(0, 229, 255, 0.1); color: var(--cyan); }
-  .impact.amber { background: rgba(255, 189, 46, 0.1); color: #ffbd2e; }
-
-  .company-tag {
-    margin-left: auto;
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--text-muted);
-    letter-spacing: 0.04em;
-  }
-
-  /* ───── PERSONAL PROJECTS PANEL ───── */
-  .proj-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 8px;
-    flex: 1;
-    align-items: stretch;
-  }
-
-  .proj-card {
-    flex: 0 0 280px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    animation: cardIn 0.4s ease forwards;
-  }
-
-  .proj-card:nth-child(1) { animation-delay: 0.05s; }
-  .proj-card:nth-child(2) { animation-delay: 0.1s; }
-  .proj-card:nth-child(3) { animation-delay: 0.15s; }
-  .proj-card:nth-child(4) { animation-delay: 0.2s; }
-
-  .proj-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, var(--lime), var(--green));
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .proj-card:hover {
-    border-color: var(--green-muted);
-    box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
-  }
-
-  .proj-card:hover::before { opacity: 1; }
-
-  .proj-card h3 {
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-
-  .proj-card p {
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.6;
-    flex-grow: 1;
-    margin-bottom: 10px;
-  }
-
-  .proj-links {
-    display: flex;
-    gap: 4px;
-  }
-
-  .proj-link {
-    width: 26px; height: 26px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-
-  .proj-link:hover {
-    border-color: var(--green);
-    color: var(--green);
-    background: var(--green-subtle);
-  }
-
-  .proj-link svg { width: 12px; height: 12px; }
-
-  /* ───── EXPERIENCE PANEL ───── */
-  .exp-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    padding-bottom: 8px;
-    flex: 1;
-    align-items: stretch;
-  }
-
-  .exp-card {
-    flex: 0 0 300px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    animation: cardIn 0.4s ease forwards;
-  }
-
-  .exp-card:nth-child(1) { animation-delay: 0.05s; }
-  .exp-card:nth-child(2) { animation-delay: 0.1s; }
-  .exp-card:nth-child(3) { animation-delay: 0.15s; }
-  .exp-card:nth-child(4) { animation-delay: 0.2s; }
-
-  .exp-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 2px;
-    background: linear-gradient(to bottom, var(--green), transparent);
-  }
-
-  .exp-card:first-child::before {
-    background: linear-gradient(to bottom, var(--green), var(--cyan));
-    box-shadow: 0 0 8px var(--green-muted);
-  }
-
-  .exp-card:hover {
-    border-color: var(--green-muted);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .exp-date {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--green-dim);
-    letter-spacing: 0.04em;
-    margin-bottom: 4px;
-  }
-
-  .exp-role {
-    font-family: var(--display);
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 2px;
-  }
-
-  .exp-company {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--green);
-    margin-bottom: 8px;
-  }
-
-  .exp-list {
-    list-style: none;
-    flex-grow: 1;
-  }
-
-  .exp-list li {
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.55;
-    padding-left: 12px;
-    position: relative;
-    margin-bottom: 4px;
-  }
-
-  .exp-list li::before {
-    content: '›';
-    position: absolute;
-    left: 0;
-    color: var(--green-dim);
-    font-weight: 700;
-  }
-
-  /* ───── EDUCATION & AWARDS PANEL ───── */
-  .edu-awards-grid {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    flex: 1;
-  }
-
-  .mini-card {
-    flex: 0 0 220px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 14px;
-    transition: all 0.3s;
-    opacity: 0;
-    animation: cardIn 0.4s ease forwards;
-  }
-
-  .mini-card:nth-child(1) { animation-delay: 0.05s; }
-  .mini-card:nth-child(2) { animation-delay: 0.1s; }
-  .mini-card:nth-child(3) { animation-delay: 0.15s; }
-  .mini-card:nth-child(4) { animation-delay: 0.2s; }
-  .mini-card:nth-child(5) { animation-delay: 0.25s; }
-  .mini-card:nth-child(6) { animation-delay: 0.3s; }
-
-  .mini-card:hover {
-    border-color: var(--green-muted);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .mini-card .icon {
-    font-size: 16px;
-    margin-bottom: 8px;
-  }
-
-  .mini-card h4 {
-    font-family: var(--display);
-    font-size: 12px;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: var(--text);
-  }
-
-  .mini-card .sub {
-    font-family: var(--mono);
-    font-size: 10px;
-    color: var(--green);
-    margin-bottom: 2px;
-  }
-
-  .mini-card .meta {
-    font-size: 9px;
-    color: var(--text-muted);
-  }
-
-  .mini-card .desc {
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.55;
-    margin-top: 4px;
-  }
-
-  /* ───── TESTIMONIALS PANEL ───── */
-  .test-scroll {
-    display: flex;
-    gap: 12px;
-    overflow-x: auto;
-    padding-bottom: 8px;
-    flex: 1;
-  }
-
-  .test-card {
-    flex: 0 0 320px;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    transition: all 0.3s;
-    opacity: 0;
-    animation: cardIn 0.4s ease forwards;
-  }
-
-  .test-card:nth-child(1) { animation-delay: 0.05s; }
-  .test-card:nth-child(2) { animation-delay: 0.1s; }
-  .test-card:nth-child(3) { animation-delay: 0.15s; }
-  .test-card:nth-child(4) { animation-delay: 0.2s; }
-
-  .test-card:hover {
-    border-color: var(--green-muted);
-    box-shadow: var(--shadow-glow);
-  }
-
-  .test-quote {
-    font-size: 10px;
-    color: var(--text-dim);
-    line-height: 1.7;
-    font-style: italic;
-    flex-grow: 1;
-    margin-bottom: 12px;
-  }
-
-  .test-quote::before {
-    content: '"';
-    font-family: var(--display);
-    font-size: 24px;
-    color: var(--green-muted);
-    line-height: 0;
-    vertical-align: -8px;
-    margin-right: 2px;
-  }
-
-  .test-footer {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border);
-  }
-
-  .test-avatar {
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    background: var(--green-subtle);
-    border: 1px solid var(--green-muted);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--mono);
-    font-size: 9px;
-    font-weight: 600;
-    color: var(--green);
-    flex-shrink: 0;
-  }
-
-  .test-name {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  .test-role {
-    font-size: 9px;
-    color: var(--text-muted);
-  }
-
-  .test-rel {
-    font-family: var(--mono);
-    font-size: 8px;
-    color: var(--green-dim);
-    letter-spacing: 0.04em;
-  }
-
-  /* ───── STATUS BAR ───── */
-  .statusbar {
-    background: var(--bg-panel);
-    border-top: 1px solid var(--border);
-    padding: 0 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 26px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text-muted);
-  }
-
-  .statusbar-left, .statusbar-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .statusbar .green { color: var(--green); }
-
-  /* ───── ANIMATIONS ───── */
-  @keyframes slideIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes cardIn {
-    from { opacity: 0; transform: translateX(16px); }
-    to { opacity: 1; transform: translateX(0); }
-  }
-
-  /* Scanline overlay */
-  .shell::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 255, 102, 0.008) 2px,
-      rgba(0, 255, 102, 0.008) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* ───── RESPONSIVE ───── */
-  @media (max-width: 768px) {
-    body { overflow: auto; }
-    .shell { grid-template-rows: 40px 1fr; height: auto; min-height: 100vh; }
-    .main { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-    .sidebar { max-height: none; border-right: none; border-bottom: 1px solid var(--border); }
-    .topbar-nav { display: none; }
-  }
+:root{
+  --bg:#050505;--bg2:#0a0a0a;--surface:#0e0e0e;--surface2:#131313;--surface3:#1a1a1a;
+  --border:#1a1a1a;--border2:#252525;
+  --g:#00e05c;--g2:#00ff6a;--g3:#00c44e;
+  --gg:rgba(0,224,92,.10);--gg2:rgba(0,224,92,.06);--gg3:rgba(0,224,92,.20);
+  --white:#f2f2f2;--t1:#ccc;--t2:#999;--t3:#666;--t4:#444;--t5:#2a2a2a;
+  --red:#ff6b6b;--blue:#5eadff;--amber:#ffb443;
+  --serif:'Cormorant Garamond',Georgia,serif;
+  --sans:'Instrument Sans',system-ui,sans-serif;
+  --mono:'JetBrains Mono',monospace;
+  --r:12px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--t1);font-family:var(--sans);font-size:14px;height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+::selection{background:var(--g);color:var(--bg)}
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--t5);border-radius:2px}
+::-webkit-scrollbar-thumb:hover{background:var(--g3)}
+
+.wrap{display:grid;grid-template-columns:340px 1fr;height:100vh;overflow:hidden}
+
+/* LEFT */
+.left{background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;justify-content:space-between;padding:48px 36px 32px;position:relative;overflow:hidden}
+.left::before{content:'';position:absolute;inset:0;background-image:linear-gradient(var(--border) 1px,transparent 1px),linear-gradient(90deg,var(--border) 1px,transparent 1px);background-size:60px 60px;opacity:.25;pointer-events:none}
+.left::after{content:'';position:absolute;bottom:-80px;left:-40px;width:260px;height:260px;background:radial-gradient(circle,var(--gg3) 0%,transparent 70%);pointer-events:none}
+.left-content{position:relative;z-index:1}
+
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:40px;opacity:0;animation:fadeIn .5s ease forwards .1s}
+.brand-mark{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--g),#009e3c);display:flex;align-items:center;justify-content:center;font-family:var(--sans);font-weight:700;font-size:15px;color:var(--bg);box-shadow:0 0 30px var(--gg3),0 4px 16px rgba(0,0,0,.5)}
+.brand-text{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.04em;line-height:1.5}
+.brand-text span{color:var(--g)}
+
+.hero-name{font-family:var(--serif);font-size:52px;font-weight:300;line-height:1.05;letter-spacing:-.03em;color:var(--white);margin-bottom:8px;opacity:0;animation:fadeIn .6s ease forwards .2s}
+.hero-name em{font-style:italic;font-weight:500;color:var(--g);text-shadow:0 0 40px var(--gg3)}
+.hero-title{font-family:var(--mono);font-size:11px;color:var(--t3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:24px;opacity:0;animation:fadeIn .5s ease forwards .35s}
+.hero-desc{font-size:14px;font-weight:400;color:var(--t2);line-height:1.75;margin-bottom:32px;opacity:0;animation:fadeIn .5s ease forwards .45s}
+
+.hero-stats{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:32px;opacity:0;animation:fadeIn .5s ease forwards .55s}
+.hs{text-align:center;padding:12px 0;background:var(--surface);border:1px solid var(--border);border-radius:10px;transition:all .25s}
+.hs:hover{border-color:var(--gg3);box-shadow:0 0 16px var(--gg)}
+.hs-v{font-family:var(--serif);font-size:24px;font-weight:500;color:var(--g);line-height:1}
+.hs-l{font-family:var(--mono);font-size:8px;color:var(--t4);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+
+.hero-ctas{display:flex;flex-wrap:wrap;gap:8px;opacity:0;animation:fadeIn .5s ease forwards .65s}
+.cta{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:10px;font-family:var(--sans);font-size:12px;font-weight:600;text-decoration:none;transition:all .25s;cursor:pointer}
+.cta svg{width:14px;height:14px}
+.cta-primary{background:var(--g);color:var(--bg);border:none;box-shadow:0 0 20px var(--gg3)}
+.cta-primary:hover{background:var(--g2);box-shadow:0 0 32px var(--gg3);transform:translateY(-2px)}
+.cta-ghost{background:transparent;color:var(--t2);border:1px solid var(--border2)}
+.cta-ghost:hover{color:var(--g);border-color:var(--g3);background:var(--gg2)}
+
+.left-footer{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;opacity:0;animation:fadeIn .5s ease forwards .75s}
+.status{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--g)}
+.status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--g);box-shadow:0 0 8px var(--g);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.left-copy{font-family:var(--mono);font-size:9px;color:var(--t5)}
+
+/* RIGHT */
+.right{overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.section{padding:48px 48px 0}
+.section:last-child{padding-bottom:48px}
+.sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:24px}
+.sec-number{font-family:var(--serif);font-size:48px;font-weight:300;color:var(--t5);line-height:1;letter-spacing:-.03em}
+.sec-title{font-family:var(--serif);font-size:32px;font-weight:400;color:var(--white);letter-spacing:-.02em}
+.sec-line{flex:1;height:1px;background:var(--border);margin-left:16px;position:relative;top:4px}
+.sec-sub{font-size:13px;color:var(--t3);margin-top:-16px;margin-bottom:24px;padding-left:72px}
+
+.h-stream{display:flex;gap:14px;overflow-x:auto;overflow-y:hidden;padding-bottom:8px;scroll-snap-type:x mandatory}
+
+/* WORK CARDS */
+.wcard{flex:0 0 340px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;transition:all .35s;position:relative;overflow:hidden}
+.wcard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .3s}
+.wcard:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.4),0 0 24px var(--gg)}
+.wcard:hover::before{opacity:1}
+.wcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.wcard-icon{font-size:22px;width:40px;height:40px;border-radius:12px;background:var(--gg2);border:1px solid var(--gg);display:flex;align-items:center;justify-content:center}
+.wcard-badge{font-family:var(--mono);font-size:9px;padding:3px 9px;border-radius:5px;background:rgba(255,107,107,.06);color:var(--red);border:1px solid rgba(255,107,107,.12);text-transform:uppercase;letter-spacing:.03em}
+.wcard h3{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--white);margin-bottom:8px;line-height:1.3}
+.wcard p{font-size:12.5px;color:var(--t2);line-height:1.7;flex-grow:1;margin-bottom:14px}
+.wcard-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.wtag{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:5px;background:var(--bg);border:1px solid var(--border);color:var(--t3)}
+.wcard-foot{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--border)}
+.wimp{font-family:var(--mono);font-size:9.5px;font-weight:500;padding:3px 9px;border-radius:5px}
+.wimp.g{background:var(--gg2);color:var(--g)}.wimp.b{background:rgba(94,173,255,.06);color:var(--blue)}.wimp.a{background:rgba(255,180,67,.06);color:var(--amber)}
+.wcard-co{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--t4)}
+
+/* PROJECT CARDS */
+.pcard{flex:0 0 280px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;transition:all .35s;text-decoration:none;color:inherit;position:relative;overflow:hidden}
+.pcard::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#b8ff57,var(--g));opacity:0;transition:opacity .3s}
+.pcard:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.4),0 0 24px var(--gg)}
+.pcard:hover::after{opacity:1}
+.pcard-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.pcard-icon{font-size:20px;width:36px;height:36px;border-radius:10px;background:var(--gg2);border:1px solid var(--gg);display:flex;align-items:center;justify-content:center}
+.pcard-links{display:flex;gap:4px}
+.pl{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;color:var(--t4);text-decoration:none;transition:all .2s}
+.pl:hover{border-color:var(--g3);color:var(--g);background:var(--gg2)}
+.pl svg{width:12px;height:12px}
+.pcard h3{font-family:var(--sans);font-size:15px;font-weight:600;color:var(--white);margin-bottom:8px}
+.pcard p{font-size:12.5px;color:var(--t2);line-height:1.65;flex-grow:1;margin-bottom:12px}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:28px}
+.timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:2px;background:linear-gradient(to bottom,var(--g),var(--g3),var(--t5));border-radius:2px}
+.tl-item{position:relative;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px;transition:all .3s}
+.tl-item:hover{border-color:var(--border2);transform:translateX(6px);box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.tl-item::before{content:'';position:absolute;left:-28px;top:24px;width:16px;height:16px;border-radius:50%;background:var(--surface);border:2.5px solid var(--g3)}
+.tl-item:first-child::before{background:var(--g);border-color:var(--g);box-shadow:0 0 10px var(--gg3)}
+.tl-date{font-family:var(--mono);font-size:10px;color:var(--g3);letter-spacing:.03em;margin-bottom:4px}
+.tl-role{font-size:15px;font-weight:600;color:var(--white);margin-bottom:2px}
+.tl-co{font-size:13px;color:var(--g);margin-bottom:8px}
+.tl-list{list-style:none}
+.tl-list li{font-size:12px;color:var(--t2);line-height:1.65;padding-left:14px;position:relative;margin-bottom:3px}
+.tl-list li::before{content:'›';position:absolute;left:0;color:var(--g3);font-weight:700}
+
+/* SKILLS */
+.skills-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:28px}
+.skills-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.sg-title{font-family:var(--mono);font-size:9px;color:var(--t4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.sg-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.sg-tag{font-size:12px;font-weight:500;padding:6px 14px;border-radius:8px;border:1px solid var(--border);color:var(--t2);background:var(--bg);transition:all .2s;cursor:default}
+.sg-tag:hover{border-color:var(--gg3);color:var(--g);background:var(--gg2);transform:translateY(-1px)}
+.sg-tag.lit{border-color:var(--gg);color:var(--g);background:var(--gg2)}
+
+/* RECS */
+.rcard{flex:0 0 360px;scroll-snap-align:start;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;transition:all .35s}
+.rcard:hover{border-color:var(--border2);transform:translateY(-3px);box-shadow:0 12px 40px rgba(0,0,0,.3)}
+.rcard-text{font-family:var(--serif);font-size:15px;font-weight:400;font-style:italic;color:var(--t2);line-height:1.75;flex-grow:1;margin-bottom:16px}
+.rcard-text::before{content:'"';font-size:36px;color:var(--g3);line-height:0;vertical-align:-12px;margin-right:4px}
+.rcard-foot{display:flex;align-items:center;gap:10px;padding-top:14px;border-top:1px solid var(--border)}
+.rcard-av{width:32px;height:32px;border-radius:50%;background:var(--gg2);border:1px solid var(--gg);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10px;font-weight:600;color:var(--g);flex-shrink:0}
+.rcard-name{font-size:13px;font-weight:600;color:var(--white)}
+.rcard-role{font-size:10.5px;color:var(--t3)}
+.rcard-rel{font-family:var(--mono);font-size:9px;color:var(--g3);text-transform:uppercase;letter-spacing:.03em}
+
+/* EDU/AWARDS */
+.ea-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.ea-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .3s}
+.ea-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.ea-icon{font-size:20px;margin-bottom:10px}
+.ea-card h4{font-size:13px;font-weight:600;color:var(--white);margin-bottom:3px;line-height:1.3}
+.ea-card .sub{font-size:11.5px;color:var(--g)}
+.ea-card .meta{font-family:var(--mono);font-size:10px;color:var(--t4);margin-top:2px}
+.ea-card .desc{font-size:11.5px;color:var(--t2);line-height:1.6;margin-top:6px}
+
+.scroll-hint{display:flex;gap:6px;margin-top:12px;justify-content:flex-end}
+.sarrow{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--surface);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--t3);transition:all .25s;font-size:14px}
+.sarrow:hover{border-color:var(--g3);color:var(--g);background:var(--gg2);transform:translateY(-1px)}
+
+.reveal{opacity:0;transform:translateY(24px);transition:all .6s cubic-bezier(.16,1,.3,1)}
+.reveal.visible{opacity:1;transform:translateY(0)}
+@keyframes revealFb{to{opacity:1;transform:translateY(0)}}
+.reveal{animation:revealFb .01s 2.5s forwards}
+.reveal.visible{animation:none}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:900px){
+  .wrap{grid-template-columns:1fr;height:auto}
+  .left{padding:32px 24px;position:static}
+  .right{height:auto}
+  body{overflow:auto;height:auto}
+  .hero-name{font-size:36px}
+  .hero-stats{grid-template-columns:1fr 1fr}
+  .ea-grid{grid-template-columns:1fr}
+  .skills-grid{grid-template-columns:1fr}
+  .section{padding:32px 20px 0}
+}
 </style>
 </head>
 <body>
-<div class="shell">
-
-  <!-- TOP BAR -->
-  <div class="topbar">
-    <div class="topbar-left">
-      <div class="topbar-dots"><span></span><span></span><span></span></div>
-      <span class="topbar-title"><span class="green">surya</span>@portfolio ~ %</span>
+<div class="wrap">
+<div class="left">
+  <div class="left-content">
+    <div class="brand"><div class="brand-mark">SS</div><div class="brand-text"><span>surya</span>@singh<br>portfolio v2.0</div></div>
+    <h1 class="hero-name">Surya<br><em>Singh</em></h1>
+    <div class="hero-title">AI & Analytics Consultant</div>
+    <p class="hero-desc">6+ years building AI-powered products, agentic workflows, and analytics solutions at scale. From NLP pipelines processing millions of documents to GenAI systems driving revenue growth — I ship things that matter.</p>
+    <div class="hero-stats">
+      <div class="hs"><div class="hs-v">6+</div><div class="hs-l">Years</div></div>
+      <div class="hs"><div class="hs-v">2M+</div><div class="hs-l">Docs</div></div>
+      <div class="hs"><div class="hs-v">500+</div><div class="hs-l">Users</div></div>
+      <div class="hs"><div class="hs-v">76</div><div class="hs-l">Markets</div></div>
     </div>
-    <ul class="topbar-nav">
-      <li><a href="#" onclick="switchTab('work')">work</a></li>
-      <li><a href="#" onclick="switchTab('projects')">projects</a></li>
-      <li><a href="#" onclick="switchTab('experience')">experience</a></li>
-      <li><a href="#" onclick="switchTab('more')">edu & awards</a></li>
-      <li><a href="#" onclick="switchTab('recs')">recs</a></li>
-    </ul>
-    <div class="topbar-status">
-      <div class="status-dot"></div>
-      <span>Open to work</span>
+    <div class="hero-ctas">
+      <a href="https://github.com/yourusername" target="_blank" class="cta cta-primary"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+      <a href="https://linkedin.com/in/yourprofile" target="_blank" class="cta cta-ghost"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
+      <a href="/cdn-cgi/l/email-protection#691a1c1b1008191b081d0819471a00070e015951290e04080005470a0604" class="cta cta-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>Email</a>
+      <a href="tel:+919899656984" class="cta cta-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>Call</a>
+    </div>
+  </div>
+  <div class="left-footer"><div class="status">Open to work</div><div class="left-copy">© 2025</div></div>
+</div>
+
+<div class="right">
+  <!-- 01 ENTERPRISE WORK -->
+  <div class="section reveal">
+    <div class="sec-head"><span class="sec-number">01</span><span class="sec-title">Enterprise Work</span><span class="sec-line"></span></div>
+    <p class="sec-sub">High-impact projects at leading consulting firms. Source code is proprietary.</p>
+    <div class="h-stream" id="workStream">
+      <div class="wcard"><div class="wcard-top"><div class="wcard-icon">&#129302;</div><span class="wcard-badge">&#128274; Proprietary</span></div><h3>Agentic Metadata Extraction</h3><p>Designed an agentic workflow using AWS Step Functions to automate metadata extraction from experiments and ensure compliance with open-source licensing.</p><div class="wcard-tags"><span class="wtag">AWS Step Functions</span><span class="wtag">LangGraph</span><span class="wtag">Python</span><span class="wtag">GenAI</span></div><div class="wcard-foot"><span class="wimp g">&#9889; Automated Pipeline</span><span class="wimp b">&#128737; Compliance</span><span class="wcard-co">Accenture Strategy</span></div></div>
+      <div class="wcard"><div class="wcard-top"><div class="wcard-icon">&#128172;</div><span class="wcard-badge">&#128274; Proprietary</span></div><h3>Clinical Document Chatbot</h3><p>Led cross-functional team of LLM Engineers, Frontend, and Cloud developers to deploy a conversational chatbot across 2M+ clinical documents.</p><div class="wcard-tags"><span class="wtag">Advanced RAG</span><span class="wtag">AWS</span><span class="wtag">NLP</span><span class="wtag">LangChain</span></div><div class="wcard-foot"><span class="wimp g">&#8595; 30% Response Time</span><span class="wimp b">2M+ Documents</span><span class="wcard-co">Accenture Strategy</span></div></div>
+      <div class="wcard"><div class="wcard-top"><div class="wcard-icon">&#128221;</div><span class="wcard-badge">&#128274; Proprietary</span></div><h3>AI-Powered Audit Writer</h3><p>End-to-end budgeting and execution of a GenAI audit writer reducing report generation from months to days, adopted by 500+ users.</p><div class="wcard-tags"><span class="wtag">GenAI</span><span class="wtag">Prompt Engineering</span><span class="wtag">Python</span></div><div class="wcard-foot"><span class="wimp a">Months → Days</span><span class="wimp g">500+ Users</span><span class="wcard-co">Accenture Strategy</span></div></div>
+      <div class="wcard"><div class="wcard-top"><div class="wcard-icon">&#127919;</div><span class="wcard-badge">&#128274; Proprietary</span></div><h3>Next Best Action Engine</h3><p>Deployed a recommendation system for sales reps that cut dependency on product SMEs by 30%, powered by predictive analytics.</p><div class="wcard-tags"><span class="wtag">ML</span><span class="wtag">Python</span><span class="wtag">SQL</span><span class="wtag">Predictive Analytics</span></div><div class="wcard-foot"><span class="wimp g">&#8595; 30% SME Dependency</span><span class="wimp b">Fortune 100</span><span class="wcard-co">ZS Associates</span></div></div>
+    </div>
+    <div class="scroll-hint"><button class="sarrow" onclick="document.getElementById('workStream').scrollBy({left:-360,behavior:'smooth'})">&#8592;</button><button class="sarrow" onclick="document.getElementById('workStream').scrollBy({left:360,behavior:'smooth'})">&#8594;</button></div>
+  </div>
+
+  <!-- 02 PERSONAL PROJECTS -->
+  <div class="section reveal">
+    <div class="sec-head"><span class="sec-number">02</span><span class="sec-title">Personal Projects</span><span class="sec-line"></span></div>
+    <p class="sec-sub">Side projects and experiments. Code is public — feel free to explore.</p>
+    <div class="h-stream" id="projStream">
+      <a href="https://github.com/yourusername/project-1" target="_blank" class="pcard"><div class="pcard-top"><div class="pcard-icon">&#128640;</div><div class="pcard-links"><span class="pl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span><span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span></div></div><h3>Your Project Name</h3><p>Brief description of what this project does and why you built it. What did you learn?</p><div class="wcard-tags"><span class="wtag">Python</span><span class="wtag">LangChain</span><span class="wtag">Streamlit</span></div></a>
+      <a href="https://github.com/yourusername/project-2" target="_blank" class="pcard"><div class="pcard-top"><div class="pcard-icon">&#129504;</div><div class="pcard-links"><span class="pl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span></div></div><h3>Another Project</h3><p>What problem does it solve? What tech did you explore?</p><div class="wcard-tags"><span class="wtag">FastAPI</span><span class="wtag">RAG</span><span class="wtag">Docker</span></div></a>
+      <a href="https://github.com/yourusername/project-3" target="_blank" class="pcard"><div class="pcard-top"><div class="pcard-icon">&#128202;</div><div class="pcard-links"><span class="pl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span><span class="pl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span></div></div><h3>Yet Another Project</h3><p>A data viz, ML experiment, or tool to sharpen skills.</p><div class="wcard-tags"><span class="wtag">Tableau</span><span class="wtag">Python</span><span class="wtag">SQL</span></div></a>
+      <a href="https://github.com/yourusername/project-4" target="_blank" class="pcard"><div class="pcard-top"><div class="pcard-icon">&#9889;</div><div class="pcard-links"><span class="pl"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span></div></div><h3>One More Project</h3><p>The section scrolls horizontally for more projects.</p><div class="wcard-tags"><span class="wtag">Google ADK</span><span class="wtag">Agents</span><span class="wtag">Python</span></div></a>
+    </div>
+    <div class="scroll-hint"><button class="sarrow" onclick="document.getElementById('projStream').scrollBy({left:-300,behavior:'smooth'})">&#8592;</button><button class="sarrow" onclick="document.getElementById('projStream').scrollBy({left:300,behavior:'smooth'})">&#8594;</button></div>
+  </div>
+
+  <!-- 03 EXPERIENCE -->
+  <div class="section reveal">
+    <div class="sec-head"><span class="sec-number">03</span><span class="sec-title">Experience</span><span class="sec-line"></span></div>
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-date">Aug 2024 — Present</div><div class="tl-role">Consultant — AI & Analytics</div><div class="tl-co">Accenture Strategy & Consulting</div><ul class="tl-list"><li>Designed agentic workflows using AWS Step Functions for metadata extraction and licensing compliance</li><li>Led cross-functional team deploying conversational chatbot across 2M+ clinical documents</li><li>Built AI-powered audit writer reducing report generation from months to days (500+ users)</li><li>Enhanced chatbot performance with Advanced RAG, cutting response time by 30%</li></ul></div>
+      <div class="tl-item"><div class="tl-date">Jan 2023 — Jul 2024</div><div class="tl-role">Associate Consultant — Digital Transformation & ML</div><div class="tl-co">ZS Associates</div><ul class="tl-list"><li>Led MDM change management across Gulf, Saudi, and Turkey for 1M+ customers</li><li>Defined 300+ KPIs at Omnichannel level, improving customer engagement by 20%</li><li>Secured multimillion-dollar projects from a Fortune 100 with region-agnostic MVP</li><li>Deployed Next Best Action recommendation system, cutting SME dependency by 30%</li></ul></div>
+      <div class="tl-item"><div class="tl-date">Aug 2020 — Dec 2022</div><div class="tl-role">Associate — NLP & Advanced Analytics</div><div class="tl-co">ZS Associates</div><ul class="tl-list"><li>Replaced commercial vendor with custom NLP solution for Key Opinion Leader identification</li><li>Saved 480 man-hours/quarter with product-agnostic data pipelines across 76 markets</li><li>Managed team to redesign and optimize 25 ETL projects</li></ul></div>
+      <div class="tl-item"><div class="tl-date">Nov 2019 — Mar 2020</div><div class="tl-role">Data Analyst</div><div class="tl-co">EY (Ernst & Young)</div><ul class="tl-list"><li>Slashed audit processing time by 75% through automation of massive data transformations</li><li>Designed and optimized data pipelines for 33 projects within 3 months</li></ul></div>
     </div>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
+  <!-- 04 SKILLS -->
+  <div class="section reveal">
+    <div class="sec-head"><span class="sec-number">04</span><span class="sec-title">Skills & Technologies</span><span class="sec-line"></span></div>
+    <div class="skills-wrap"><div class="skills-grid">
+      <div><div class="sg-title">AI & Machine Learning</div><div class="sg-tags"><span class="sg-tag lit">LangGraph</span><span class="sg-tag lit">LangChain</span><span class="sg-tag lit">Google ADK</span><span class="sg-tag">Crew AI</span><span class="sg-tag">Autogen</span><span class="sg-tag">RAG</span><span class="sg-tag lit">Prompt Engineering</span><span class="sg-tag">NLP</span><span class="sg-tag">Predictive Analytics</span></div><div class="sg-title">Languages & Data</div><div class="sg-tags"><span class="sg-tag lit">Python</span><span class="sg-tag lit">SQL</span><span class="sg-tag">Snowflake</span><span class="sg-tag">Alteryx</span><span class="sg-tag">Dataiku</span></div></div>
+      <div><div class="sg-title">Cloud & Automation</div><div class="sg-tags"><span class="sg-tag lit">AWS</span><span class="sg-tag">AWS Step Functions</span><span class="sg-tag">ETL Pipelines</span><span class="sg-tag">n8n</span><span class="sg-tag">Zapier</span><span class="sg-tag">Webhooks</span></div><div class="sg-title">BI & Leadership</div><div class="sg-tags"><span class="sg-tag">Tableau</span><span class="sg-tag">Power BI</span><span class="sg-tag">Excel</span><span class="sg-tag">Stakeholder Management</span><span class="sg-tag">Cross-functional Teams</span><span class="sg-tag">JIRA</span><span class="sg-tag">Go-To-Market</span></div></div>
+    </div></div>
+  </div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="hero-compact">
-        <div class="hero-name">Surya <span class="glow">Singh</span></div>
-        <div class="hero-role">AI & Analytics Consultant</div>
-        <p class="hero-desc">6+ years building AI-powered products, agentic workflows, and analytics solutions at scale. From NLP pipelines processing millions of documents to GenAI systems driving revenue growth.</p>
-        <div class="hero-links">
-          <a href="https://github.com/yourusername" target="_blank" class="hero-link">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            GitHub
-          </a>
-          <a href="https://linkedin.com/in/yourprofile" target="_blank" class="hero-link">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
-            LinkedIn
-          </a>
-        </div>
-      </div>
+  <!-- 05 RECOMMENDATIONS -->
+  <div class="section reveal">
+    <div class="sec-head"><span class="sec-number">05</span><span class="sec-title">Recommendations</span><span class="sec-line"></span></div>
+    <p class="sec-sub">Testimonials from clients, managers, and colleagues on LinkedIn.</p>
+    <div class="h-stream" id="recStream">
+      <div class="rcard"><p class="rcard-text">Surya was a critical stakeholder in this project. His problem-solving skills were exceptional, aided largely by his ability to translate industry subject matter expertise into the relevant Bayesian logic required for a successful outcome. He worked tirelessly, was an absolute delight to work with, and had a lot of integrity. I recommend Surya without hesitation.</p><div class="rcard-foot"><div class="rcard-av">AQ</div><div><div class="rcard-name">Andres Quintero, MD MPH MBA</div><div class="rcard-role">Medical Affairs Director at Novo Nordisk</div><div class="rcard-rel">Client</div></div></div></div>
+      <div class="rcard"><p class="rcard-text">If there's a word that can define Surya, it has to be 'Tenacious'. Surya is brilliant in whatever he ventures. He is adept with advanced analytics, leads with empathy, and always strives for more than asked. His resilience is unparalleled. In a few years, I see Surya as a business operations leader of a stellar company.</p><div class="rcard-foot"><div class="rcard-av">IR</div><div><div class="rcard-name">Ishu Ratna</div><div class="rcard-role">London Business School MBA | AI Strategy | IIT</div><div class="rcard-rel">Mentor</div></div></div></div>
+      <div class="rcard"><p class="rcard-text">Surya has consistently demonstrated exceptional technical skills, resilience, and a remarkable ability to deliver under tight deadlines. His calm focus under pressure and flexibility with clients' needs is outstanding. I wholeheartedly recommend Surya.</p><div class="rcard-foot"><div class="rcard-av">SK</div><div><div class="rcard-name">Shrividhya Krishnan</div><div class="rcard-role">BTS Consultant | ZS | CSM®, CSPO®</div><div class="rcard-rel">Senior Colleague</div></div></div></div>
+      <div class="rcard"><p class="rcard-text">Surya's never say die attitude is what I loved the most about him. He is a great asset to any organization and brings deep data engineering skills clubbed with foundational data science capabilities.</p><div class="rcard-foot"><div class="rcard-av">CG</div><div><div class="rcard-name">Chirag Gurbaxani</div><div class="rcard-role">BTS Manager @ ZS | AI-led Transformations</div><div class="rcard-rel">Direct Manager</div></div></div></div>
+    </div>
+    <div class="scroll-hint"><button class="sarrow" onclick="document.getElementById('recStream').scrollBy({left:-380,behavior:'smooth'})">&#8592;</button><button class="sarrow" onclick="document.getElementById('recStream').scrollBy({left:380,behavior:'smooth'})">&#8594;</button></div>
+  </div>
 
-      <div class="stats-row">
-        <div class="stat"><div class="stat-val">6+</div><div class="stat-lbl">Years Exp</div></div>
-        <div class="stat"><div class="stat-val">2M+</div><div class="stat-lbl">Docs Processed</div></div>
-        <div class="stat"><div class="stat-val">500+</div><div class="stat-lbl">Users</div></div>
-        <div class="stat"><div class="stat-val">76</div><div class="stat-lbl">Markets</div></div>
-      </div>
-
-      <div class="skills-block">
-        <div class="skills-label">Core Skills</div>
-        <div class="skills-tags">
-          <span class="stag highlight">LangGraph</span>
-          <span class="stag highlight">LangChain</span>
-          <span class="stag highlight">Google ADK</span>
-          <span class="stag">Crew AI</span>
-          <span class="stag">RAG</span>
-          <span class="stag highlight">Python</span>
-          <span class="stag highlight">AWS</span>
-          <span class="stag">SQL</span>
-          <span class="stag">NLP</span>
-          <span class="stag">GenAI</span>
-          <span class="stag">Tableau</span>
-          <span class="stag">Snowflake</span>
-          <span class="stag">n8n</span>
-          <span class="stag">Zapier</span>
-          <span class="stag">Power BI</span>
-          <span class="stag">JIRA</span>
-        </div>
-      </div>
-
-      <div class="contact-block">
-        <div class="skills-label">Contact</div>
-        <div class="contact-list">
-          <a href="/cdn-cgi/l/email-protection#691a1c1b1008191b081d0819471a00070e015951290e04080005470a0604" class="contact-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-            Email
-          </a>
-          <a href="tel:+919899656984" class="contact-item">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            +91-9899656984
-          </a>
-        </div>
-      </div>
-    </aside>
-
-    <!-- CONTENT -->
-    <div class="content">
-      <div class="section-tabs">
-        <button class="tab active" onclick="switchTab('work')">// enterprise_work</button>
-        <button class="tab" onclick="switchTab('projects')">// personal_projects</button>
-        <button class="tab" onclick="switchTab('experience')">// career_timeline</button>
-        <button class="tab" onclick="switchTab('more')">// edu_&_awards</button>
-        <button class="tab" onclick="switchTab('recs')">// recommendations</button>
-      </div>
-
-      <!-- WORK PANEL -->
-      <div class="tab-panel active" id="panel-work">
-        <div>
-          <div class="panel-title">Enterprise Projects</div>
-          <div class="panel-sub">High-impact projects at leading consulting firms. Source code is proprietary.</div>
-        </div>
-        <div class="pro-scroll">
-          <div class="pro-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#129302;</div>
-              <span class="pro-badge">&#128274; Proprietary</span>
-            </div>
-            <h3>Agentic Metadata Extraction</h3>
-            <p>Designed an agentic workflow using AWS Step Functions to automate metadata extraction from experiments and ensure compliance with open-source licensing.</p>
-            <div class="tags-row">
-              <span class="tag">AWS Step Functions</span>
-              <span class="tag">LangGraph</span>
-              <span class="tag">Python</span>
-              <span class="tag">GenAI</span>
-            </div>
-            <div class="impact-row">
-              <span class="impact green">&#9889; Automated Pipeline</span>
-              <span class="impact cyan">&#128737; Compliance</span>
-              <span class="company-tag">Accenture Strategy</span>
-            </div>
-          </div>
-
-          <div class="pro-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#128172;</div>
-              <span class="pro-badge">&#128274; Proprietary</span>
-            </div>
-            <h3>Clinical Document Chatbot</h3>
-            <p>Led cross-functional team of LLM Engineers, Frontend, and Cloud developers to deploy a conversational chatbot across 2M+ clinical documents.</p>
-            <div class="tags-row">
-              <span class="tag">Advanced RAG</span>
-              <span class="tag">AWS</span>
-              <span class="tag">NLP</span>
-              <span class="tag">LangChain</span>
-            </div>
-            <div class="impact-row">
-              <span class="impact green">&#8595; 30% Response Time</span>
-              <span class="impact cyan">2M+ Documents</span>
-              <span class="company-tag">Accenture Strategy</span>
-            </div>
-          </div>
-
-          <div class="pro-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#128221;</div>
-              <span class="pro-badge">&#128274; Proprietary</span>
-            </div>
-            <h3>AI-Powered Audit Writer</h3>
-            <p>End-to-end budgeting and execution of a GenAI audit writer that reduced report generation time from months to days, adopted by 500+ users.</p>
-            <div class="tags-row">
-              <span class="tag">GenAI</span>
-              <span class="tag">Prompt Engineering</span>
-              <span class="tag">Python</span>
-            </div>
-            <div class="impact-row">
-              <span class="impact amber">Months → Days</span>
-              <span class="impact green">500+ Users</span>
-              <span class="company-tag">Accenture Strategy</span>
-            </div>
-          </div>
-
-          <div class="pro-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#127919;</div>
-              <span class="pro-badge">&#128274; Proprietary</span>
-            </div>
-            <h3>Next Best Action Engine</h3>
-            <p>Deployed a recommendation system for sales reps that cut dependency on product SMEs by 30%, powered by predictive analytics.</p>
-            <div class="tags-row">
-              <span class="tag">ML</span>
-              <span class="tag">Python</span>
-              <span class="tag">SQL</span>
-              <span class="tag">Predictive Analytics</span>
-            </div>
-            <div class="impact-row">
-              <span class="impact green">&#8595; 30% SME Dependency</span>
-              <span class="impact cyan">Fortune 100</span>
-              <span class="company-tag">ZS Associates</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- PROJECTS PANEL -->
-      <div class="tab-panel" id="panel-projects">
-        <div>
-          <div class="panel-title">Built by Me</div>
-          <div class="panel-sub">Side projects and experiments. Code is public — feel free to explore.</div>
-        </div>
-        <div class="proj-scroll">
-          <a href="https://github.com/yourusername/project-1" target="_blank" class="proj-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#128640;</div>
-              <div class="proj-links">
-                <span class="proj-link" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
-                <span class="proj-link" title="Live Demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-              </div>
-            </div>
-            <h3>Your Project Name</h3>
-            <p>Brief description of what this project does and why you built it. What did you learn?</p>
-            <div class="tags-row">
-              <span class="tag">Python</span>
-              <span class="tag">LangChain</span>
-              <span class="tag">Streamlit</span>
-            </div>
-          </a>
-
-          <a href="https://github.com/yourusername/project-2" target="_blank" class="proj-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#129504;</div>
-              <div class="proj-links">
-                <span class="proj-link" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
-              </div>
-            </div>
-            <h3>Another Project</h3>
-            <p>Another side project description. What problem does it solve? What tech did you explore?</p>
-            <div class="tags-row">
-              <span class="tag">FastAPI</span>
-              <span class="tag">RAG</span>
-              <span class="tag">Docker</span>
-            </div>
-          </a>
-
-          <a href="https://github.com/yourusername/project-3" target="_blank" class="proj-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#128202;</div>
-              <div class="proj-links">
-                <span class="proj-link" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
-                <span class="proj-link" title="Live Demo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg></span>
-              </div>
-            </div>
-            <h3>Yet Another Project</h3>
-            <p>Description of a data viz, ML experiment, or tool you built to sharpen your skills.</p>
-            <div class="tags-row">
-              <span class="tag">Tableau</span>
-              <span class="tag">Python</span>
-              <span class="tag">SQL</span>
-            </div>
-          </a>
-
-          <a href="https://github.com/yourusername/project-4" target="_blank" class="proj-card">
-            <div class="pro-top">
-              <div class="pro-icon">&#9889;</div>
-              <div class="proj-links">
-                <span class="proj-link" title="GitHub"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
-              </div>
-            </div>
-            <h3>One More Project</h3>
-            <p>Keep adding cards here as you build more projects. The section scrolls horizontally.</p>
-            <div class="tags-row">
-              <span class="tag">Google ADK</span>
-              <span class="tag">Agents</span>
-              <span class="tag">Python</span>
-            </div>
-          </a>
-        </div>
-      </div>
-
-      <!-- EXPERIENCE PANEL -->
-      <div class="tab-panel" id="panel-experience">
-        <div>
-          <div class="panel-title">Career Timeline</div>
-          <div class="panel-sub">Scroll horizontally to explore each role.</div>
-        </div>
-        <div class="exp-scroll">
-          <div class="exp-card">
-            <div class="exp-date">Aug 2024 — Present</div>
-            <div class="exp-role">Consultant — AI & Analytics</div>
-            <div class="exp-company">Accenture Strategy & Consulting</div>
-            <ul class="exp-list">
-              <li>Designed agentic workflows using AWS Step Functions for metadata extraction</li>
-              <li>Led cross-functional team deploying chatbot across 2M+ clinical docs</li>
-              <li>Built AI audit writer reducing report generation from months to days</li>
-              <li>Enhanced chatbot with Advanced RAG, cutting response time by 30%</li>
-            </ul>
-          </div>
-
-          <div class="exp-card">
-            <div class="exp-date">Jan 2023 — Jul 2024</div>
-            <div class="exp-role">Associate Consultant — Digital Transformation</div>
-            <div class="exp-company">ZS Associates</div>
-            <ul class="exp-list">
-              <li>Led MDM change management across Gulf, Saudi, Turkey for 1M+ customers</li>
-              <li>Defined 300+ KPIs at Omnichannel level, improving engagement by 20%</li>
-              <li>Secured multimillion-dollar projects from Fortune 100</li>
-              <li>Deployed Next Best Action system, cutting SME dependency by 30%</li>
-            </ul>
-          </div>
-
-          <div class="exp-card">
-            <div class="exp-date">Aug 2020 — Dec 2022</div>
-            <div class="exp-role">Associate — NLP & Advanced Analytics</div>
-            <div class="exp-company">ZS Associates</div>
-            <ul class="exp-list">
-              <li>Replaced commercial vendor with custom NLP for KOL identification</li>
-              <li>Saved 480 man-hours/quarter with product-agnostic data pipelines</li>
-              <li>Managed team redesigning 25 ETL projects</li>
-            </ul>
-          </div>
-
-          <div class="exp-card">
-            <div class="exp-date">Nov 2019 — Mar 2020</div>
-            <div class="exp-role">Data Analyst</div>
-            <div class="exp-company">EY (Ernst & Young)</div>
-            <ul class="exp-list">
-              <li>Slashed audit processing time by 75% through automation</li>
-              <li>Designed data pipelines for 33 projects in 3 months</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <!-- EDU & AWARDS PANEL -->
-      <div class="tab-panel" id="panel-more">
-        <div>
-          <div class="panel-title">Education & Awards</div>
-          <div class="panel-sub">Academic background and recognition.</div>
-        </div>
-        <div class="edu-awards-grid">
-          <div class="mini-card">
-            <div class="icon">&#127891;</div>
-            <h4>MS in Machine Learning & AI</h4>
-            <div class="sub">Liverpool John Moores University</div>
-            <div class="meta">Oct 2023 — Dec 2024 · England (Online)</div>
-          </div>
-          <div class="mini-card">
-            <h4>Bachelor of Technology</h4>
-            <div class="sub">Amity University</div>
-            <div class="meta">Jun 2015 — Jun 2019 · Noida, India</div>
-          </div>
-          <div class="mini-card">
-            <div class="icon">&#127942;</div>
-            <h4>Above & Beyond Award</h4>
-            <div class="desc">Honored for surpassing expectations delivering high-impact GenAI projects.</div>
-          </div>
-          <div class="mini-card">
-            <div class="icon">&#128200;</div>
-            <h4>Business Growth Driver</h4>
-            <div class="desc">Created AI solutions driving substantial up-sell & cross-sell revenue growth.</div>
-          </div>
-          <div class="mini-card">
-            <div class="icon">&#129504;</div>
-            <h4>Subject Matter Expert</h4>
-            <div class="desc">Recognized by Partners as SME for clear use-case guides and proposals.</div>
-          </div>
-          <div class="mini-card">
-            <div class="icon">&#127941;</div>
-            <h4>Project Champion</h4>
-            <div class="desc">Nominated to work directly with vendors on training sessions at ZS Associates.</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- RECS PANEL -->
-      <div class="tab-panel" id="panel-recs">
-        <div>
-          <div class="panel-title">Recommendations</div>
-          <div class="panel-sub">Testimonials from clients, managers, and colleagues.</div>
-        </div>
-        <div class="test-scroll">
-          <div class="test-card">
-            <p class="test-quote">Surya was a critical stakeholder in this project. His problem-solving skills were exceptional, aided largely by his ability to translate industry subject matter expertise into the relevant Bayesian logic required for a successful outcome. He worked tirelessly, was an absolute delight to work with, and had a lot of integrity. I recommend Surya without hesitation.</p>
-            <div class="test-footer">
-              <div class="test-avatar">AQ</div>
-              <div>
-                <div class="test-name">Andres Quintero, MD MPH MBA</div>
-                <div class="test-role">Medical Affairs Director at Novo Nordisk</div>
-                <div class="test-rel">Client</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="test-card">
-            <p class="test-quote">If there's a word that can define Surya, it has to be 'Tenacious'. Surya is brilliant in whatever he ventures. He is adept with advanced analytics, leads with empathy, and always strives for more than asked. His resilience is unparalleled. In a few years, I see Surya as a business operations leader of a stellar company.</p>
-            <div class="test-footer">
-              <div class="test-avatar">IR</div>
-              <div>
-                <div class="test-name">Ishu Ratna</div>
-                <div class="test-role">London Business School MBA | AI Strategy | IIT</div>
-                <div class="test-rel">Mentor</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="test-card">
-            <p class="test-quote">Surya has consistently demonstrated exceptional technical skills, resilience, and a remarkable ability to deliver under tight deadlines. His ability to remain calm and focused under pressure and accommodating clients' needs is outstanding. I wholeheartedly recommend Surya.</p>
-            <div class="test-footer">
-              <div class="test-avatar">SK</div>
-              <div>
-                <div class="test-name">Shrividhya Krishnan</div>
-                <div class="test-role">BTS Consultant | ZS | CSM®, CSPO®</div>
-                <div class="test-rel">Senior Colleague</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="test-card">
-            <p class="test-quote">Surya worked with me on many engagements while his tenure at ZS. He was working in the Senior Data Engineer capacity leading a team of 3-4 data engineers. Surya's never say die attitude is what I loved the most about him. He is a great asset to any organization with deep data engineering skills.</p>
-            <div class="test-footer">
-              <div class="test-avatar">CG</div>
-              <div>
-                <div class="test-name">Chirag Gurbaxani</div>
-                <div class="test-role">BTS Manager @ ZS | AI-led Data Transformations</div>
-                <div class="test-rel">Direct Manager</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- STATUS BAR -->
-      <div class="statusbar">
-        <div class="statusbar-left">
-          <span><span class="green">&#9679;</span> main</span>
-          <span>UTF-8</span>
-          <span>Built by Surya Singh &#9829; 2025</span>
-        </div>
-        <div class="statusbar-right">
-          <span>Ln 1, Col 1</span>
-          <span class="green">Ready</span>
-        </div>
-      </div>
+  <!-- 06 EDUCATION & AWARDS -->
+  <div class="section reveal">
+    <div class="sec-head"><span class="sec-number">06</span><span class="sec-title">Education & Awards</span><span class="sec-line"></span></div>
+    <div class="ea-grid">
+      <div class="ea-card"><div class="ea-icon">&#127891;</div><h4>MS in Machine Learning & AI</h4><div class="sub">Liverpool John Moores University</div><div class="meta">Oct 2023 — Dec 2024 · England</div></div>
+      <div class="ea-card"><div class="ea-icon">&#127891;</div><h4>Bachelor of Technology</h4><div class="sub">Amity University</div><div class="meta">Jun 2015 — Jun 2019 · Noida, India</div></div>
+      <div class="ea-card"><div class="ea-icon">&#127942;</div><h4>Above & Beyond Award</h4><div class="desc">Honored for surpassing expectations delivering high-impact GenAI projects.</div></div>
+      <div class="ea-card"><div class="ea-icon">&#128200;</div><h4>Business Growth Driver</h4><div class="desc">AI solutions driving substantial up-sell and cross-sell revenue growth.</div></div>
+      <div class="ea-card"><div class="ea-icon">&#129504;</div><h4>Subject Matter Expert</h4><div class="desc">Recognized by Partners as SME for clear use-case guides and proposals.</div></div>
+      <div class="ea-card"><div class="ea-icon">&#127941;</div><h4>Project Champion</h4><div class="desc">Nominated to work with vendors on training sessions at ZS Associates.</div></div>
     </div>
   </div>
 </div>
+</div>
 
 <script>
-function switchTab(name) {
-  // Deactivate all tabs and panels
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-panel').forEach(p => {
-    p.classList.remove('active');
-    // Reset animations
-    p.querySelectorAll('.pro-card, .proj-card, .exp-card, .mini-card, .test-card').forEach(c => {
-      c.style.animation = 'none';
-      c.offsetHeight; // trigger reflow
-      c.style.animation = '';
-    });
-  });
-
-  // Map tab names
-  const map = { work: 'work', projects: 'projects', experience: 'experience', more: 'more', recs: 'recs' };
-  const panel = document.getElementById('panel-' + map[name]);
-  if (panel) panel.classList.add('active');
-
-  // Activate correct tab button
-  const labels = { work: '// enterprise_work', projects: '// personal_projects', experience: '// career_timeline', more: '// edu_&_awards', recs: '// recommendations' };
-  document.querySelectorAll('.tab').forEach(t => {
-    if (t.textContent.trim() === labels[name]) t.classList.add('active');
-  });
-}
-
-// Hover play on video panes (if any future videos added)
-document.querySelectorAll('.video-pane video').forEach(v => {
-  v.parentElement.addEventListener('mouseenter', () => { v.currentTime = 0; v.play().catch(() => {}); });
-  v.parentElement.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
-});
+const rightCol=document.querySelector('.right');
+const observer=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting)en.target.classList.add('visible')})},{threshold:.08,root:rightCol,rootMargin:'0px 0px -30px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
 </script>
 </body>
 </html>
